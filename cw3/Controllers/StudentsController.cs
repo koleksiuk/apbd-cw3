@@ -34,6 +34,18 @@ namespace cw3.Controllers
             return NotFound("Nie znaleziono");
         }
 
+        [HttpPut("{id}")]
+        public IActionResult UpdateStudent(int id)
+        {
+            return Ok("Aktualizacja dokończona");
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteStudent(int id)
+        {
+            return Ok("Usuwanie ukończone");
+        }
+
         [HttpPost]
         public IActionResult CreateStudent(Student student)
         {
