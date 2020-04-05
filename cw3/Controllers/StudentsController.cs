@@ -29,18 +29,18 @@ namespace cw3.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetStudent(int id)
+        public IActionResult GetStudent(string id)
         {
-            if (id == 1)
-            {
-                return Ok("Kowalski");
-            }
-            else if (id == 2)
-            {
-                return Ok("Majewski");
-            }
+            Student st = _dbService.GetStudent(id);
 
-            return NotFound("Nie znaleziono");
+            if (st != null)
+            {
+                return Ok(st);
+            }
+            else
+            {
+                return NotFound("Student not found");
+            }
         }
 
         [HttpPut("{id}")]
