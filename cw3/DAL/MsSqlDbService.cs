@@ -50,8 +50,9 @@ namespace cw3.DAL
             using var com = new SqlCommand
             {
                 Connection = Connection,
-                CommandText = $"SELECT TOP 1 * FROM Student s LEFT JOIN Enrollment e ON s.IdEnrollment = e.IdEnrollment LEFT JOIN Studies st ON e.IdStudy = st.IdStudy WHERE s.IndexNumber='{id}'"
+                CommandText = "SELECT TOP 1 * FROM Student s LEFT JOIN Enrollment e ON s.IdEnrollment = e.IdEnrollment LEFT JOIN Studies st ON e.IdStudy = st.IdStudy WHERE s.IndexNumber=@indexNumber;"
             };
+            com.Parameters.AddWithValue("indexNumber", id);
 
             Connection.Open();
 
