@@ -4,7 +4,7 @@ using cw3.Models;
 
 namespace cw3.DAL
 {
-    public class MockDbService : IDbService
+    public class MockDbService : IStudentDbService
     {
         private static readonly IEnumerable<Student> _students;
 

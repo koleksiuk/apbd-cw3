@@ -3,20 +3,10 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using cw3.Models;
 
-namespace cw3.DAL
+namespace cw3.DAL.MsSql
 {
-    public class MsSqlDbService : IDbService
+    public class StudentDbService : BaseDbService, IStudentDbService
     {
-        private string _connectionDetails =
-            "Server=localhost,1433;Database=university;User Id=SA;Password=Pass@word;";
-
-        SqlConnection Connection;
-
-        public MsSqlDbService()
-        {
-            Connection = new SqlConnection(_connectionDetails);
-        }
-
         public IEnumerable<Student> GetStudents()
         {
             var students = new List<Student>();
@@ -50,10 +40,13 @@ namespace cw3.DAL
             using var com = new SqlCommand
             {
                 Connection = Connection,
-                CommandText = "SELECT TOP 1 * FROM Student s LEFT JOIN Enrollment e ON s.IdEnrollment = e.IdEnrollment LEFT JOIN Studies st ON e.IdStudy = st.IdStudy WHERE s.IndexNumber=@indexNumber;"
+                CommandText = @"
+SELECT TOP 1 * FROM Student s
+LEFT JOIN Enrollment e ON s.IdEnrollment = e.IdEnrollment
+LEFT JOIN Studies st ON e.IdStudy = st.IdStudy
+WHERE s.IndexNumber=@indexNumber;"
             };
             com.Parameters.AddWithValue("indexNumber", id);
-
             Connection.Open();
 
             var dr = com.ExecuteReader();
