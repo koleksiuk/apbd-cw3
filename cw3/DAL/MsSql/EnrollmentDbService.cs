@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using cw3.DTOs.Requests;
 using cw3.DTOs.Responses;
+using System.Data;
 using static cw3.DAL.IEnrollmentDbService;
 
 namespace cw3.DAL.MsSql
@@ -14,7 +15,7 @@ namespace cw3.DAL.MsSql
 
             SqlCommand command = Connection.CreateCommand();
 
-            var startDate = Convert.ToDateTime("01-09-2020"); // hardcoded
+            var startDate = DateTime.Now;
 
             var tran = Connection.BeginTransaction();
 
@@ -96,13 +97,22 @@ VALUES(@indexNumber, @firstName, @lastName, @birthdate, @idEnrollment)";
                 Connection.Close();
                 throw new OperationException($"Unknown exception: {ex.Message}");
             }
-
-            
         }
 
         public void PromoteStudents(int semester, string studies)
         {
-            throw new NotImplementedException();
+            SqlCommand command = Connection.CreateCommand();
+            command.CommandText = "sp_Promote_Students";
+            command.Connection = Connection;
+
+            command.CommandType = CommandType.StoredProcedure;
+
+            command.Parameters.Add("@Semester", SqlDbType.Int).Value = semester;
+            command.Parameters.Add("@Studies", SqlDbType.VarChar).Value = studies;
+
+            Connection.Open();
+            command.ExecuteNonQuery();
+            Connection.Close();
         }
     }
 }

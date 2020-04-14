@@ -1,5 +1,6 @@
 ﻿using cw3.DAL;
 using Microsoft.AspNetCore.Mvc;
+using cw3.DTOs.Requests;
 using static cw3.DAL.IEnrollmentDbService;
 
 namespace cw3.Controllers
@@ -17,7 +18,7 @@ namespace cw3.Controllers
 
         
         [HttpPost]
-        public IActionResult EnrollStudent(DTOs.Requests.EnrollStudentRequest request)
+        public IActionResult EnrollStudent(EnrollStudentRequest request)
         {
             /*
             {
@@ -38,6 +39,14 @@ namespace cw3.Controllers
             {
                 return BadRequest(ex.Message);
             }            
+        }
+
+        [HttpPut("promotions")]
+        public IActionResult PromoteStudents(PromoteStudentsRequest request)
+        {
+            _dbService.PromoteStudents(request.Semester, request.Studies);
+
+            return Created("/enrollments/", request);
         }
     }
 }
