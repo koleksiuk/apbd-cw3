@@ -1,17 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 using cw3.DAL;
 using cw3.DAL.MsSql;
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace cw3
 {
@@ -43,6 +39,28 @@ namespace cw3
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.Use(async (context, next) =>
+            {
+                if (context.Request.Headers.ContainsKey("Index"))
+                {
+                    var index = context.Request.Headers["Index"].ToString();
+
+                    if (!String.IsNullOrWhiteSpace(index))
+                    {
+                        var service = app.ApplicationServices.GetService<IStudentDbService>();
+
+                        if (service.GetStudent(index) != null)
+                        {
+                            await next();
+                            return;
+                        }
+                    }
+                }
+
+                context.Response.StatusCode = (int)System.Net.HttpStatusCode.Unauthorized;
+                await HttpResponseWritingExtensions.WriteAsync(context.Response, "Invalid Student");
+            });
 
             app.UseAuthorization();
 

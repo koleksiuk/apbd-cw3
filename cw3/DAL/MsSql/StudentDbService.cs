@@ -47,27 +47,37 @@ LEFT JOIN Studies st ON e.IdStudy = st.IdStudy
 WHERE s.IndexNumber=@indexNumber;"
             };
             com.Parameters.AddWithValue("indexNumber", id);
+
             Connection.Open();
 
-            var dr = com.ExecuteReader();
-
-            while (dr.Read())
+            try
             {
-                Student st = new Student
-                {
-                    FirstName = dr["FirstName"].ToString(),
-                    LastName = dr["LastName"].ToString(),
-                    IndexNumber = dr["IndexNumber"].ToString(),
-                    BirthdateString = dr["Birthdate"].ToString(),
-                    Enrollment = new Enrollment()
-                };
-                st.Enrollment.Semester = (int)dr["Semester"];
-                st.Enrollment.Study.Name = dr["Name"].ToString();
+                var dr = com.ExecuteReader();
 
-                return st;
+                while (dr.Read())
+                {
+                    Student st = new Student
+                    {
+                        FirstName = dr["FirstName"].ToString(),
+                        LastName = dr["LastName"].ToString(),
+                        IndexNumber = dr["IndexNumber"].ToString(),
+                        BirthdateString = dr["Birthdate"].ToString(),
+                        Enrollment = new Enrollment()
+                    };
+                    st.Enrollment.Semester = (int)dr["Semester"];
+                    st.Enrollment.Study.Name = dr["Name"].ToString();
+
+                    return st;
+                }
+            }
+            catch (Exception e) {                
+                throw e;
+            } finally
+            {
+                Connection.Close();
             }
 
-            Connection.Close();
+            
 
             return null;
         }
