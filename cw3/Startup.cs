@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using cw3.Middlewares;
 
 namespace cw3
 {
@@ -62,12 +63,14 @@ namespace cw3
                 await HttpResponseWritingExtensions.WriteAsync(context.Response, "Invalid Student");
             });
 
+            app.UseMiddleware<LoggingMiddleware>();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-            });
+            });            
         }
     }
 }
