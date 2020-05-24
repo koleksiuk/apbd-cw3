@@ -46,13 +46,18 @@ namespace cw3.Controllers
         [HttpPost()]
         public IActionResult SignIn(SignInRequest request)
         {
-            var student = _dbService.GetStudentForAuth(request.IndexNumber, request.Password);
+            var student = _dbService.GetStudent(request.IndexNumber);
 
             if (student == null)
             {
                 return Unauthorized();
             }
 
+            if (!student.IsValidPassword(request.Password))
+            {
+                return Unauthorized();
+            }
+            
             JwtSecurityToken token = generateJwtToken(student);
 
             var refreshToken = Guid.NewGuid();

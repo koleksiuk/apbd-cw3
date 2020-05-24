@@ -54,7 +54,14 @@ INSERT INTO Enrollment(IdEnrollment, IdStudy, Semester, StartDate) VALUES(2, 2, 
 INSERT INTO Enrollment(IdEnrollment, IdStudy, Semester, StartDate) VALUES(3, 3, 2, '2020-06-01');
 INSERT INTO Enrollment(IdEnrollment, IdStudy, Semester, StartDate) VALUES(4, 1, 3, '2019-01-01');
 
-INSERT INTO Student(IndexNumber, FirstName, LastName, Password, BirthDate, IdEnrollment) VALUES('s100', 'John', 'Doe', 'johndoe', '1990-06-01', 1)
-INSERT INTO Student(IndexNumber, FirstName, LastName, Password, BirthDate, IdEnrollment) VALUES('s101', 'Mike', 'Doe', 'mikedoe', '1990-06-01', 1)
-INSERT INTO Student(IndexNumber, FirstName, LastName, Password, BirthDate, IdEnrollment) VALUES('s102', 'Alice', 'Doe', 'alicedoe', '1990-06-01', 2)
-INSERT INTO Student(IndexNumber, FirstName, LastName, Password, BirthDate, IdEnrollment) VALUES('s103', 'Alice', 'Mike', 'alicemike', '1990-06-01', 3)
+// pass: johndoe
+INSERT INTO Student(IndexNumber, FirstName, LastName, Password, BirthDate, IdEnrollment) VALUES('s100', 'John', 'Doe', '$2a$10$Kmd2krNg2cKA8EuUxIDfDO02050f5qtk0Vm0u1U.jkkRT//Kd31Zu', '1990-06-01', 1)
+
+// pass: mikedoe
+INSERT INTO Student(IndexNumber, FirstName, LastName, Password, BirthDate, IdEnrollment) VALUES('s101', 'Mike', 'Doe', '$2a$10$gYAPwEJmrNHl2KFkahmA7uyQZY81WjkpuTkynd8B3nfyGq42FZi7e', '1990-06-01', 1)
+
+// pass: alicedoe
+INSERT INTO Student(IndexNumber, FirstName, LastName, Password, BirthDate, IdEnrollment) VALUES('s102', 'Alice', 'Doe', '$2a$10$D2irTr38HmgrJFNQJ6Wc2eZZ9x0wewwebB476TP4CB8DCVe9ofx7C', '1990-06-01', 2)
+
+// pass: alicemike
+INSERT INTO Student(IndexNumber, FirstName, LastName, Password, BirthDate, IdEnrollment) VALUES('s103', 'Alice', 'Mike', '$2a$10$12ZSmNdSX8NVQM/DTI7.8.w0WbuZ1LL7LnCGJTAaLQe4VtGCD.ANK', '1990-06-01', 3)

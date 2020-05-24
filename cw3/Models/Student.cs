@@ -8,6 +8,12 @@ namespace cw3.Models
         public string IndexNumber { get; set; }
         public DateTime Birthdate { get; set; }
         public Enrollment Enrollment { get; set; }
+        public string Password { get; set; }
+
+        public bool IsValidPassword(string pass)
+        {   
+            return BCrypt.Net.BCrypt.Verify(pass, Password);
+        }
 
         public String BirthdateString
         {

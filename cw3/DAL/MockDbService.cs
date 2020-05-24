@@ -29,12 +29,6 @@ namespace cw3.DAL
             return (_students as List<Student>).Find(st => st.IndexNumber == id);            
         }
 
-
-        public Student GetStudentForAuth(string indexNumber, string password)
-        {
-            return (_students as List<Student>).Find(st => st.IndexNumber == indexNumber);
-        }
-
         public void UpdateRefreshToken(Student student, string refreshToken)
         {
 

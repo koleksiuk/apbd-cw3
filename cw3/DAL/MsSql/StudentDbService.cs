@@ -50,47 +50,7 @@ UPDATE Student SET RefreshToken = @refreshToken WHERE IndexNumber=@indexNumber"
 
             com.ExecuteNonQuery();
             Connection.Close();
-        }
-
-        public Student GetStudentForAuth(string indexNumber, string password)
-        {
-            using var com = new SqlCommand
-            {
-                Connection = Connection,
-                CommandText = @"
-SELECT TOP 1 * FROM Student s
-WHERE s.IndexNumber=@indexNumber AND s.Password=@password"
-            };
-            com.Parameters.AddWithValue("indexNumber", indexNumber);
-            com.Parameters.AddWithValue("password", password);
-
-            Connection.Open();
-
-            try
-            {
-                var dr = com.ExecuteReader();
-
-                while (dr.Read())
-                {
-                    Student st = new Student
-                    {
-                        IndexNumber = dr["IndexNumber"].ToString(),
-                    };
-
-                    return st;
-                }
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            finally
-            {
-                Connection.Close();
-            }
-
-            return null;
-        }
+        }      
 
         public Student GetStudentForRefreshToken(string refreshToken)
         {
@@ -155,6 +115,7 @@ WHERE s.IndexNumber=@indexNumber;"
                         LastName = dr["LastName"].ToString(),
                         IndexNumber = dr["IndexNumber"].ToString(),
                         BirthdateString = dr["Birthdate"].ToString(),
+                        Password = dr["Password"].ToString(),
                         Enrollment = new Enrollment()
                     };
                     st.Enrollment.Semester = (int)dr["Semester"];
