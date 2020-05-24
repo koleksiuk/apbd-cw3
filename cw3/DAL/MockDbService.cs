@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using cw3.Models;
 
 namespace cw3.DAL
@@ -32,6 +33,16 @@ namespace cw3.DAL
         public Student GetStudentForAuth(string indexNumber, string password)
         {
             return (_students as List<Student>).Find(st => st.IndexNumber == indexNumber);
+        }
+
+        public void UpdateRefreshToken(Student student, string refreshToken)
+        {
+
+        }
+
+        public Student GetStudentForRefreshToken(string refreshToken)
+        {
+            return (_students as List<Student>).First();
         }
     }
 }

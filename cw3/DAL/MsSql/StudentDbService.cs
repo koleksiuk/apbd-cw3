@@ -35,6 +35,23 @@ namespace cw3.DAL.MsSql
             return students;
         }
 
+        public void UpdateRefreshToken(Student student, string refreshToken)
+        {
+            using var com = new SqlCommand
+            {
+                Connection = Connection,
+                CommandText = @"
+UPDATE Student SET RefreshToken = @refreshToken WHERE IndexNumber=@indexNumber"
+            };
+            com.Parameters.AddWithValue("indexNumber", student.IndexNumber);
+            com.Parameters.AddWithValue("refreshToken", refreshToken);
+
+            Connection.Open();
+
+            com.ExecuteNonQuery();
+            Connection.Close();
+        }
+
         public Student GetStudentForAuth(string indexNumber, string password)
         {
             using var com = new SqlCommand
@@ -60,6 +77,42 @@ WHERE s.IndexNumber=@indexNumber AND s.Password=@password"
                         IndexNumber = dr["IndexNumber"].ToString(),
                     };
 
+                    return st;
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                Connection.Close();
+            }
+
+            return null;
+        }
+
+        public Student GetStudentForRefreshToken(string refreshToken)
+        {
+            using var com = new SqlCommand
+            {
+                Connection = Connection,
+                CommandText = @"SELECT TOP 1 * FROM Student s WHERE s.RefreshToken=@refreshToken;"
+            };
+            com.Parameters.AddWithValue("refreshToken", refreshToken);
+
+            Connection.Open();
+
+            try
+            {
+                var dr = com.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    Student st = new Student
+                    {
+                        IndexNumber = dr["IndexNumber"].ToString(),
+                    };
                     return st;
                 }
             }
@@ -116,8 +169,6 @@ WHERE s.IndexNumber=@indexNumber;"
             {
                 Connection.Close();
             }
-
-            
 
             return null;
         }

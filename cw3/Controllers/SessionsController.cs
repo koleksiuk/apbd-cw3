@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using cw3.DAL;
 using cw3.DTOs.Requests;
+using cw3.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -23,6 +24,25 @@ namespace cw3.Controllers
             Configuration = configuration;
         }
 
+        [HttpPost("refresh")]
+        public IActionResult RefreshToken(RefreshTokenRequest request)
+        {
+            var student = _dbService.GetStudentForRefreshToken(request.RefreshToken);
+
+            if (student == null)
+            {
+                return Unauthorized();
+            }
+
+            JwtSecurityToken token = generateJwtToken(student);
+
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(token),
+                refreshToken = request.RefreshToken
+            });
+        }
+
         [HttpPost()]
         public IActionResult SignIn(SignInRequest request)
         {
@@ -33,10 +53,25 @@ namespace cw3.Controllers
                 return Unauthorized();
             }
 
-            var claims = new[]
+            JwtSecurityToken token = generateJwtToken(student);
+
+            var refreshToken = Guid.NewGuid();
+
+            _dbService.UpdateRefreshToken(student, refreshToken.ToString());
+
+            return Ok(new
             {
+                token = new JwtSecurityTokenHandler().WriteToken(token),
+                refreshToken
+            });
+        }
+
+        private JwtSecurityToken generateJwtToken(Student student)
+        {
+            var claims = new[]
+                        {
                 new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim(ClaimTypes.Name, request.IndexNumber),
+                new Claim(ClaimTypes.Name, student.IndexNumber),
                 new Claim(ClaimTypes.Role, "student"),
                 new Claim(ClaimTypes.Role, "admin")
             };
@@ -53,11 +88,7 @@ namespace cw3.Controllers
                 signingCredentials: creds
             );
 
-            return Ok(new
-            {
-                token = new JwtSecurityTokenHandler().WriteToken(token),
-                refreshToken = Guid.NewGuid()
-            });
+            return token;
         }
     }
 }

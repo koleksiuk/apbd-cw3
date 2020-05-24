@@ -8,5 +8,7 @@ namespace cw3.DAL
         public IEnumerable<Student> GetStudents();
         public Student GetStudent(string id);
         public Student GetStudentForAuth(string indexNumber, string password);
+        public void UpdateRefreshToken(Student student, string refreshToken);
+        public Student GetStudentForRefreshToken(string refreshToken);
     }
 }
