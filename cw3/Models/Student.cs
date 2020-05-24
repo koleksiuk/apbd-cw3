@@ -1,7 +1,7 @@
 ﻿using System;
 namespace cw3.Models
 {
-    public class Student
+    public partial class Student
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

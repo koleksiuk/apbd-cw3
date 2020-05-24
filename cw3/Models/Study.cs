@@ -1,7 +1,7 @@
 ﻿using System;
 namespace cw3.Models
 {
-    public class Study
+    public partial class Study
     { 
         public Study() { }
         
