@@ -35,6 +35,46 @@ namespace cw3.DAL.MsSql
             return students;
         }
 
+        public Student GetStudentForAuth(string indexNumber, string password)
+        {
+            using var com = new SqlCommand
+            {
+                Connection = Connection,
+                CommandText = @"
+SELECT TOP 1 * FROM Student s
+WHERE s.IndexNumber=@indexNumber AND s.Password=@password"
+            };
+            com.Parameters.AddWithValue("indexNumber", indexNumber);
+            com.Parameters.AddWithValue("password", password);
+
+            Connection.Open();
+
+            try
+            {
+                var dr = com.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    Student st = new Student
+                    {
+                        IndexNumber = dr["IndexNumber"].ToString(),
+                    };
+
+                    return st;
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                Connection.Close();
+            }
+
+            return null;
+        }
+
         public Student GetStudent(string id)
         {
             using var com = new SqlCommand

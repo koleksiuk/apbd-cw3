@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using cw3.DTOs.Requests;
 using static cw3.DAL.IEnrollmentDbService;
+using Microsoft.AspNetCore.Authorization;
 
 namespace cw3.Controllers
 {
     [ApiController]
     [Route("api/enrollments")]
+    [Authorize(Roles = "employee")]
     public class EnrollmentsController : ControllerBase
     {
         private readonly IEnrollmentDbService _dbService;

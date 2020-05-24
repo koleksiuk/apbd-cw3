@@ -7,5 +7,6 @@ namespace cw3.DAL
     {
         public IEnumerable<Student> GetStudents();
         public Student GetStudent(string id);
+        public Student GetStudentForAuth(string indexNumber, string password);
     }
 }

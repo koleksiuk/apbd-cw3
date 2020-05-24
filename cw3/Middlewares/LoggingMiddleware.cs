@@ -32,10 +32,14 @@ namespace cw3.Middlewares
         {
             var buffer = new byte[Convert.ToInt32(request.ContentLength)];
 
+            request.EnableBuffering();
+
             await request.Body.ReadAsync(buffer, 0, buffer.Length);
 
             // convert the byte[] into a string using UTF8 encoding...
             var bodyAsText = Encoding.UTF8.GetString(buffer);
+
+            request.Body.Position = 0;
 
             return $"[{DateTime.Now}] {request.Method} {request.Path}, Body: '{bodyAsText}', QueryString: '{request.QueryString}'";
         }
