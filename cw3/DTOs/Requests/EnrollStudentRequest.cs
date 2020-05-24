@@ -13,6 +13,9 @@ namespace cw3.DTOs.Requests
 
         public string Email { get; set; }
 
+        [Required]
+        public string Password { get; set; }
+
         [Required(ErrorMessage ="Musisz podać imię")]
         [MaxLength(10)]
         public string FirstName { get; set; }
