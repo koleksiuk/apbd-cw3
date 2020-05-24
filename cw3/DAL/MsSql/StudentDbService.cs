@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using cw3.Models;
 
 namespace cw3.DAL.MsSql
 {
@@ -114,13 +113,9 @@ WHERE s.IndexNumber=@indexNumber;"
                         FirstName = dr["FirstName"].ToString(),
                         LastName = dr["LastName"].ToString(),
                         IndexNumber = dr["IndexNumber"].ToString(),
-                        BirthdateString = dr["Birthdate"].ToString(),
                         Password = dr["Password"].ToString(),
-                        Enrollment = new Enrollment()
                     };
-                    st.Enrollment.Semester = (int)dr["Semester"];
-                    st.Enrollment.Study.Name = dr["Name"].ToString();
-
+ 
                     return st;
                 }
             }

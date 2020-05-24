@@ -4,10 +4,10 @@ using System.Security.Claims;
 using System.Text;
 using cw3.DAL;
 using cw3.DTOs.Requests;
-using cw3.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System.Linq;
 
 namespace cw3.Controllers
 {
@@ -15,19 +15,23 @@ namespace cw3.Controllers
     [Route("api/sessions")]
     public class SessionsController : ControllerBase
     {
-        private readonly IStudentDbService _dbService;
         public IConfiguration Configuration { get; set; }
+        public readonly UniversityContext dbContext;
 
-        public SessionsController(IStudentDbService dbService, IConfiguration configuration)
+        public SessionsController(UniversityContext context, IConfiguration configuration)
         {
-            _dbService = dbService;
+            dbContext = context;
             Configuration = configuration;
         }
 
         [HttpPost("refresh")]
         public IActionResult RefreshToken(RefreshTokenRequest request)
         {
-            var student = _dbService.GetStudentForRefreshToken(request.RefreshToken);
+            var student = (
+                from st in dbContext.Student
+                where st.RefreshToken == request.RefreshToken
+                select st
+            ).FirstOrDefault();
 
             if (student == null)
             {
@@ -46,7 +50,7 @@ namespace cw3.Controllers
         [HttpPost()]
         public IActionResult SignIn(SignInRequest request)
         {
-            var student = _dbService.GetStudent(request.IndexNumber);
+            var student = dbContext.Student.Find(request.IndexNumber);
 
             if (student == null)
             {
@@ -62,7 +66,8 @@ namespace cw3.Controllers
 
             var refreshToken = Guid.NewGuid();
 
-            _dbService.UpdateRefreshToken(student, refreshToken.ToString());
+            student.RefreshToken = refreshToken.ToString();
+            dbContext.Student.Update(student);
 
             return Ok(new
             {

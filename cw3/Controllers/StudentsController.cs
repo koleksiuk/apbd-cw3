@@ -1,8 +1,8 @@
 ﻿using System;
 using cw3.DAL;
-using cw3.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -13,28 +13,47 @@ namespace cw3.Controllers
     [Authorize(Roles = "student")]
     public class StudentsController : ControllerBase
     {
-        private readonly IStudentDbService _dbService;
+        private readonly UniversityContext dbContext;
 
-        public StudentsController(IStudentDbService dbService)
+        public StudentsController(UniversityContext uc)
         {
-            _dbService = dbService;
+            dbContext = uc;
         }
 
         
         [HttpGet]
         public IActionResult GetStudents(string orderBy)
         {
-            return Ok(_dbService.GetStudents());
+            var result = from st in dbContext.Student
+                         select new
+                         {
+                             st.IndexNumber,
+                             st.FirstName,
+                             st.LastName,
+                             st.BirthDate,
+                             st.IdEnrollment
+                         };
+
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
         public IActionResult GetStudent(string id)
         {
-            Student st = _dbService.GetStudent(id);
+            var student = (from st in dbContext.Student
+                          where st.IndexNumber == id
+                          select new
+                          {
+                              st.IndexNumber,
+                              st.FirstName,
+                              st.LastName,
+                              st.BirthDate,
+                              st.IdEnrollment
+                          }).FirstOrDefault();
 
-            if (st != null)
+            if (student != null)
             {
-                return Ok(st);
+                return Ok(student);
             }
             else
             {
@@ -43,14 +62,50 @@ namespace cw3.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateStudent(int id)
+        public IActionResult UpdateStudent(string id, Student updatedStudent)
         {
-            return Ok("Aktualizacja dokończona");
+                var student = (
+                from st in dbContext.Student
+                where st.IndexNumber == id
+                select st).FirstOrDefault();
+
+            student.FirstName = updatedStudent.FirstName;
+            student.LastName = updatedStudent.LastName;
+            student.BirthDate = updatedStudent.BirthDate;
+
+            if (updatedStudent.Password != null)
+            {
+                student.Password = BCrypt.Net.BCrypt.HashPassword(updatedStudent.Password);
+            }
+    
+
+            dbContext.Entry(student).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            dbContext.SaveChanges();
+
+            return Ok(new
+            {
+                student.IndexNumber,
+                student.FirstName,
+                student.LastName,
+                student.BirthDate,
+                student.IdEnrollment
+            });
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteStudent(int id)
+        public IActionResult DeleteStudent(string id)
         {
+            var student = (
+                from st in dbContext.Student
+                where st.IndexNumber == id
+                select st).FirstOrDefault();
+
+            if (student != null)
+            {
+                dbContext.Student.Remove(student);
+                dbContext.SaveChanges();
+            }
+
             return Ok("Usuwanie ukończone");
         }
 
